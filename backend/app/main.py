@@ -51,6 +51,7 @@ async def emit_signal(event_type: str) -> None:
         type=event_type,
         lights=state.lights,
         densities=state.densities,
+        counts=state.counts,
         active_emergency=state.emergency_active,
         ts=_now_ts(),
         cycle_count=state.cycle_count,
@@ -122,6 +123,15 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(title="AI Traffic Control Engine", version="0.1.0", lifespan=lifespan)
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 @app.get("/health")
 async def health() -> dict:
@@ -173,6 +183,7 @@ async def stream() -> StreamingResponse:
                 type="SIGNAL_UPDATE",
                 lights=state.lights,
                 densities=state.densities,
+                counts=state.counts,
                 active_emergency=state.emergency_active,
                 ts=_now_ts(),
                 cycle_count=state.cycle_count,

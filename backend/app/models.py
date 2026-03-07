@@ -1,3 +1,4 @@
+import os
 from enum import Enum
 from typing import Dict, Literal
 
@@ -27,9 +28,10 @@ class EmergencyRequest(BaseModel):
 
 class SignalUpdate(BaseModel):
     type: Literal["SIGNAL_UPDATE", "EMERGENCY_OVERRIDE", "DENSITY_UPDATE"]
-    intersection: str = "INT-001"
+    intersection: str = Field(default_factory=lambda: os.getenv("INTERSECTION_ID", "INT-001"))
     lights: Dict[str, LightColor]
     densities: Dict[str, float]
+    counts: Dict[str, int] = {}
     active_emergency: bool
     ts: int
     cycle_count: int

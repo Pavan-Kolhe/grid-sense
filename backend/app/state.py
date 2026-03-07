@@ -27,6 +27,8 @@ class IntersectionState:
     last_event: str = "Initialized"
 
     def __post_init__(self) -> None:
+        self.yellow_until: float = 0.0
+        self.yellow_lane: str | None = None
         self.set_green("North", reason="Initial startup")
 
     def set_green(self, lane: str, reason: str) -> None:
@@ -62,6 +64,8 @@ class IntersectionState:
         self.emergency_active = True
         self.emergency_lane = lane
         self.emergency_until = now + duration_seconds
+        self.yellow_lane = None
+        self.yellow_until = 0.0
         for key in LANES:
             self.lights[key] = LightColor.GREEN if key == lane else LightColor.RED
         self.current_green_lane = lane
@@ -78,12 +82,23 @@ class IntersectionState:
             self.emergency_lane = None
             self.last_event = "Emergency window ended"
 
+        # Handle yellow phase completion
+        if self.yellow_lane and now >= self.yellow_until:
+            self.set_green(self.yellow_lane, reason=f"Green to {self.yellow_lane}")
+            self.yellow_lane = None
+            return True
+
         if now < self.green_until:
             return False
 
         next_lane = self.choose_next_lane()
         if next_lane != self.current_green_lane:
-            self.set_green(next_lane, reason=f"Scheduled switch to {next_lane}")
+            # Set yellow first, delay actual green by 2 seconds
+            for key in LANES:
+                self.lights[key] = LightColor.YELLOW if key == self.current_green_lane else LightColor.RED
+            self.yellow_lane = next_lane
+            self.yellow_until = now + 2
+            self.last_event = f"Yellow — switching to {next_lane}"
             return True
 
         self.green_until = now + self.compute_green_duration(self.densities[self.current_green_lane])
