@@ -1,15 +1,19 @@
-import "./globals.css";
 import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Traffic Command Center",
-  description: "Dynamic AI Traffic Flow Optimizer MVP",
+  title: "GridSense — AI Traffic Command Center",
+  description: "Real-time AI-powered traffic signal optimization with emergency override",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="relative z-10">{children}</body>
     </html>
   );
 }

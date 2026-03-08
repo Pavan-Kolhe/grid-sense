@@ -6,6 +6,7 @@ export interface SignalUpdate {
   intersection: string;
   lights: Record<Lane, LightColor>;
   densities: Record<Lane, number>;
+  counts: Record<Lane, number>;
   active_emergency: boolean;
   ts: number;
   cycle_count: number;

@@ -1,22 +1,31 @@
 FROM python:3.11-slim
-<<<<<<< HEAD
-# Need these for OpenCV
-RUN apt-get update && apt-get install -y \
-libgl1-mesa-glx \
-libglib2.0-0 \
-&& rm -rf /var/lib/apt/lists/*
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-=======
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 libglib2.0-0 libsm6 libxext6 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Install everything in ONE command so pip resolves ALL conflicts together
+RUN pip install --no-cache-dir \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    "numpy==1.26.4" \
+    "torch==2.2.2+cpu" \
+    "torchvision==0.17.2+cpu" \
+    "opencv-python-headless==4.8.1.78" \
+    "ultralytics==8.2.2" \
+    "redis==5.2.1" \
+    "pillow" \
+    "pyyaml" \
+    "tqdm" \
+    "psutil" \
+    "matplotlib" \
+    "scipy" \
+    "pandas" \
+    "seaborn" \
+    "requests"
 
+COPY traffic.mp4.mp4 /app/traffic.mp4.mp4
 COPY producer.py /app/producer.py
 
->>>>>>> a07a24a3d90872702688a065bdae1136932c1afd
 CMD ["python", "producer.py"]

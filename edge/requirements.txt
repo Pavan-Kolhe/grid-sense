@@ -1,3 +1,15 @@
 redis==5.2.1
-ultralytics==8.3.0
-opencv-python==4.9.0.80
+opencv-python-headless==4.8.1.78
+numpy<2
+psutil
+matplotlib
+scipy
+pandas
+PyYAML
+tqdm
+pillow
+requests
+seaborn
+torch==2.2.2+cpu
+torchvision==0.17.2+cpu
+ultralytics==8.2.2
